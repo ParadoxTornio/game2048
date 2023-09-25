@@ -26,12 +26,12 @@
 #             list_[i], list_[i + 1] = list_[i + 1], list_[i]
 # print(list_)
 
-list_ = [9, 8, 7, 6, 5, 4, 3, 2, 1]
-len_ = len(list_)
-for i in range(len_):
-    min_index = i
-    for j in range(i + 1, len_):
-        if list_[j] < list_[min_index]:
-            min_index = j
-    list_[i], list_[min_index] = list_[min_index], list_[i]
-print(list_)
+# list_ = [9, 8, 7, 6, 5, 4, 3, 2, 1]
+# len_ = len(list_)
+# for i in range(len_):
+#     min_index = i
+#     for j in range(i + 1, len_):
+#         if list_[j] < list_[min_index]:
+#             min_index = j
+#     list_[i], list_[min_index] = list_[min_index], list_[i]
+# print(list_)
