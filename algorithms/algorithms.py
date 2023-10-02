@@ -89,23 +89,23 @@ def merge_sort(list_: list):
     return list_
 
 
-@time_counter
-def selection_sort(list_):
-    len_ = len(list_)
-    for a in range(len_):
-        min_index = a
-        for j in range(a + 1, len_):
-            if list_[j] < list_[min_index]:
-                min_index = j
-        list_[a], list_[min_index] = list_[min_index], list_[a]
-    return list_
+# @time_counter
+# def selection_sort(list_):
+#     len_ = len(list_)
+#     for a in range(len_):
+#         min_index = a
+#         for j in range(a + 1, len_):
+#             if list_[j] < list_[min_index]:
+#                 min_index = j
+#         list_[a], list_[min_index] = list_[min_index], list_[a]
+#     return list_
 
 
 num_list = []
 num_list_2 = []
 num_list_3 = []
 
-for i in range(30000):
+for i in range(10000):
     random_num = random.randint(0, 1000000)
     num_list.append(random_num)
     num_list_2.append(random_num)
@@ -115,4 +115,7 @@ start_time_ = time.time()
 merge_sort(num_list)
 end_time_ = time.time()
 print(end_time_ - start_time_)
-selection_sort(num_list_2)
+start_time_ = time.time()
+num_list_2.sort()
+end_time_ = time.time()
+print(end_time_ - start_time_)
