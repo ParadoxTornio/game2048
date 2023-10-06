@@ -1,4 +1,5 @@
 import arcade
+import random
 from sprites import Tile
 from config import *
 
@@ -9,31 +10,40 @@ class MyGame(arcade.Window):
         super().__init__(width, height, title)
         self.background = None
         self.tiles_sprite_list = None
+        self.game_field = None
 
     def setup(self):
         self.background = arcade.load_texture('images/background.png')
         self.tiles_sprite_list = arcade.SpriteList()
-        self.tiles_sprite_list.append(Tile('512', 71, 482))  # 1
-        self.tiles_sprite_list.append(Tile('256', 208, 482))  # 2
-        self.tiles_sprite_list.append(Tile('128', 345, 482))  # 3
-        self.tiles_sprite_list.append(Tile('64', 482, 482))  # 4
-        self.tiles_sprite_list.append(Tile('512', 71, 345))  # 5
-        self.tiles_sprite_list.append(Tile('1024', 208, 345))  # 6
-        self.tiles_sprite_list.append(Tile('2048', 345, 345))  # 7
-        self.tiles_sprite_list.append(Tile('1024', 482, 345))  # 8
-        self.tiles_sprite_list.append(Tile('32', 71, 208))  # 9
-        self.tiles_sprite_list.append(Tile('64', 208, 208))  # 10
-        self.tiles_sprite_list.append(Tile('128', 345, 208))  # 11
-        self.tiles_sprite_list.append(Tile('256', 482, 208))  # 12
-        self.tiles_sprite_list.append(Tile('2', 71, 71))  # 13
-        self.tiles_sprite_list.append(Tile('4', 208, 71))  # 14
-        self.tiles_sprite_list.append(Tile('8', 345, 71))  # 15
-        self.tiles_sprite_list.append(Tile('16', 482, 71))  # 16
+        self.game_field = [
+            [0, 0, 0, 0],
+            [0, 0, 0, 0],
+            [0, 0, 0, 0],
+            [0, 0, 0, 0]]
+        tile_list_x = {
+            1: 71, 2: 208, 3: 345, 4: 482,
+            5: 71, 6: 208, 7: 345, 8: 482,
+            9: 71, 10: 208, 11: 345, 12: 482,
+            13: 71, 14: 208, 15: 345, 16: 482
+        }
+        tile_list_y = {
+            1: 482, 2: 482, 3: 482, 4: 482,
+            5: 345, 6: 345, 7: 345, 8: 345,
+            9: 208, 10: 208, 11: 208, 12: 208,
+            13: 71, 14: 71, 15: 71, 16: 71
+        }
+        self.game_field[3][0] = Tile('2', tile_list_x[13], tile_list_y[13])  # 13
 
     def on_draw(self):
         self.clear()
-        arcade.draw_lrwh_rectangle_textured(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, self.background),
-        self.tiles_sprite_list.draw()
+        arcade.draw_lrwh_rectangle_textured(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, self.background)
+        self.draw_tiles()
+
+    def draw_tiles(self):
+        for row in self.game_field:
+            for tile in row:
+                if tile:
+                    tile.draw()
 
     def on_update(self, delta_time):
         pass
