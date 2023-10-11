@@ -7,10 +7,10 @@ from sprites import Tile
 from config import *
 
 
-class MyGame(arcade.Window):
+class GameView(arcade.View):
 
-    def __init__(self, width, height, title):
-        super().__init__(width, height, title)
+    def __init__(self):
+        super().__init__()
         self.background = None
         self.tiles_sprite_list = None
         self.game_field = None
@@ -20,6 +20,9 @@ class MyGame(arcade.Window):
         self.score = 0
         self.level = 2
         self.quit_game_counter = 0
+
+    def on_show_view(self):
+        self.setup()
 
     def setup(self):
         self.background = arcade.load_texture('images/background.png')
@@ -45,8 +48,7 @@ class MyGame(arcade.Window):
                 if j:
                     self.quit_game_counter += 1
         if self.quit_game_counter == 16:
-            time.sleep(1)
-            exit()
+            self.window.show_view(GameOverView())
         else:
             self.quit_game_counter = 0
         self.draw_tiles()
@@ -168,11 +170,22 @@ class MyGame(arcade.Window):
     def on_mouse_release(self, x, y, button, key_modifiers):
         pass
 
+class GameOverView(arcade.View):
+    def __init__(self):
+        super().__init__()
+        self.screen = arcade.load_texture('images/game_over_screen.png')
+        self.arrow = arcade.load_texture('images/arrow.png')
+        self.arrow_cords = {'yes':(276, 103), 'no':(276, 400)}
+    def  on_draw(self):
+        self.clear()
+        arcade.draw_lrwh_rectangle_textured(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, self.screen)
+
 
 def main():
     """ Main function """
-    game = MyGame(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
-    game.setup()
+    window = arcade.Window(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
+    game_view = GameView()
+    window.show_view(game_view)
     arcade.run()
 
 
