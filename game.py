@@ -2,6 +2,7 @@ import time
 from typing import Union, List
 import arcade
 import random
+import pickle
 from sprites import Tile
 from config import *
 
@@ -19,26 +20,15 @@ class MyGame(arcade.Window):
         self.score = 0
         self.level = 2
         self.quit_game_counter = 0
-        self.score_file = open('score.txt', 'r', encoding='utf-8')
-        self.game_field_file = open('game_field.txt', 'r', encoding='utf-8')
-        self.max_score = self.score_file.read()
-        print(str(self.max_score))
 
     def setup(self):
         self.background = arcade.load_texture('images/background.png')
         self.tiles_sprite_list = arcade.SpriteList()
-        game_file_read1 = self.game_field_file.readlines(1)
-        game_file_read2 = self.game_field_file.readlines(2)
-        print(game_file_read1[0])
-        print(game_file_read2[0])
-        if game_file_read2 != 'True':
-            self.game_field: List[List[Union[int, Tile]]] = [
-                [0, 0, 0, 0],
-                [0, 0, 0, 0],
-                [0, 0, 0, 0],
-                [0, 0, 0, 0]]
-        else:
-            self.game_field = game_file_read1[0]
+        self.game_field: List[List[Union[int, Tile]]] = [
+            [0, 0, 0, 0],
+            [0, 0, 0, 0],
+            [0, 0, 0, 0],
+            [0, 0, 0, 0]]
         self.random_tile()
         self.random_tile()
         self.random_tile()
@@ -48,8 +38,6 @@ class MyGame(arcade.Window):
         self.clear()
         arcade.draw_lrwh_rectangle_textured(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, self.background)
         arcade.draw_text(str(self.score), 90, SCREEN_HEIGHT - 33, arcade.color.BLACK, 16, 50, font_name='Arial')
-        arcade.draw_text(self.max_score, 450, SCREEN_HEIGHT - 33, arcade.color.BLACK, 16, 50,
-                         font_name='Arial')
         if self.score >= self.level * 500:
             self.level += 1
         for i in self.game_field:
@@ -58,14 +46,6 @@ class MyGame(arcade.Window):
                     self.quit_game_counter += 1
         if self.quit_game_counter == 16:
             time.sleep(1)
-            self.score_file.close()
-            self.game_field_file.close()
-            score_file = open('score.txt', 'w+', encoding='utf-8')
-            game_field_file = open('game_field.txt', 'w+', encoding='utf-8')
-            score_file.write(str(self.score))
-            game_field_file.write(str(self.game_field) + '\n' + 'True')
-            self.score_file.close()
-            self.game_field_file.close()
             exit()
         else:
             self.quit_game_counter = 0
@@ -117,7 +97,7 @@ class MyGame(arcade.Window):
             y = new_y
 
     def move_right(self, y, x):
-        while x < 0:
+        while x < 3:
             new_x = x + 1
             if self.game_field[y][new_x] == 0:
                 self.game_field[y][new_x] = self.game_field[y][x]
@@ -166,15 +146,15 @@ class MyGame(arcade.Window):
             self.random_tile()
 
         if key == arcade.key.LEFT:
-            for y in range(0, 4):
-                for x in range(4):
+            for x in range(1, 4):
+                for y in range(4):
                     if self.game_field[y][x] != 0:
                         self.move_left(y, x)
             self.random_tile()
 
         if key == arcade.key.RIGHT:
-            for y in range(0, 4):
-                for x in range(4):
+            for x in range(2, -1, -1):
+                for y in range(4):
                     if self.game_field[y][x] != 0:
                         self.move_right(y, x)
             self.random_tile()
