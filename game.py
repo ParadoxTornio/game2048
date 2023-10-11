@@ -1,3 +1,4 @@
+import time
 from typing import Union, List
 import arcade
 import random
@@ -17,6 +18,8 @@ class MyGame(arcade.Window):
         self.value_list = [2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192, 16384, 32768, 65536]
         self.score = 0
         self.level = 2
+        self.quit_game_counter = 0
+        self.my_file = open('score.txt', 'r+', encoding='utf-8')
 
     def setup(self):
         self.background = arcade.load_texture('images/background.png')
@@ -37,6 +40,18 @@ class MyGame(arcade.Window):
         arcade.draw_text(str(self.score), 90, SCREEN_HEIGHT - 33, arcade.color.BLACK, 16, 50, font_name='Arial')
         if self.score >= self.level * 500:
             self.level += 1
+        for i in self.game_field:
+            for j in i:
+                if j:
+                    self.quit_game_counter += 1
+        if self.quit_game_counter == 16:
+            time.sleep(1)
+            self.my_file.write('score = ' + str(self.score) + '\n')
+            self.my_file.write('game field = ' + str(self.game_field))
+            self.my_file.close()
+            exit()
+        else:
+            self.quit_game_counter = 0
         self.draw_tiles()
 
     def random_tile(self):
