@@ -170,16 +170,36 @@ class GameView(arcade.View):
     def on_mouse_release(self, x, y, button, key_modifiers):
         pass
 
+
 class GameOverView(arcade.View):
     def __init__(self):
         super().__init__()
         self.screen = arcade.load_texture('images/game_over_screen.png')
         self.arrow = arcade.load_texture('images/arrow.png')
-        self.arrow_cords = {'yes':(276, 103), 'no':(276, 400)}
-    def  on_draw(self):
+        self.arrow_cords = {'yes': (261, 103), 'no': (261, 386)}
+        self.arrow_x = self.arrow_cords['yes'][1]
+        self.arrow_y = self.arrow_cords['yes'][0]
+        self.choice = True
+
+    def on_draw(self):
         self.clear()
         arcade.draw_lrwh_rectangle_textured(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, self.screen)
+        arcade.draw_lrwh_rectangle_textured(self.arrow_x, self.arrow_y, 15, 35, self.arrow)
 
+    def on_key_press(self, key, key_modifiers):
+        if key == arcade.key.RIGHT:
+            self.arrow_x = self.arrow_cords['no'][1]
+            self.arrow_y = self.arrow_cords['no'][0]
+            self.choice = False
+        if key == arcade.key.LEFT:
+            self.arrow_x = self.arrow_cords['yes'][1]
+            self.arrow_y = self.arrow_cords['yes'][0]
+            self.choice = True
+        if key == arcade.key.ENTER:
+            if self.choice:
+                self.window.show_view(GameView())
+            elif not self.choice:
+                self.window.close()
 
 def main():
     """ Main function """
