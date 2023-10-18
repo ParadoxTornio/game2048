@@ -1,7 +1,6 @@
 import cx_Freeze
 
 
-
 executables = [cx_Freeze.Executable('game.py',
                                     base='Win32GUI',
                                     icon='images/icon.ico',

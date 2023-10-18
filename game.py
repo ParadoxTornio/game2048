@@ -1,4 +1,5 @@
-from typing import Union, List
+import time
+from typing import Union, List, Dict
 import arcade
 import random
 import pickle
@@ -18,10 +19,10 @@ class Tile(arcade.Sprite):
 
 class GameView(arcade.View):
 
-    def __init__(self):
+    def __init__(self, load_game = False):
         super().__init__()
         self.background = None
-        self.tiles_sprite_list = None
+        self.save_success_image = None
         self.game_field = None
         self.cord_dict_x = {0: 71, 1: 208, 2: 345, 3: 482}
         self.cord_dict_y = {0: 482, 1: 345, 2: 208, 3: 71}
@@ -31,6 +32,8 @@ class GameView(arcade.View):
         self.level = 2
         self.quit_game_counter = 0
         self.is_game_over = False
+        self.timer = 0
+        self.load_game = load_game
 
     def on_show_view(self):
         self.setup()
@@ -39,34 +42,61 @@ class GameView(arcade.View):
         self.score = 0
         self.max_score = 0
         self.background = arcade.load_texture('images/background.png')
-        self.tiles_sprite_list = arcade.SpriteList()
+        self.save_success_image = arcade.load_texture('images/save_success.png')
         self.game_field: List[List[Union[int, Tile]]] = [
             [0, 0, 0, 0],
             [0, 0, 0, 0],
             [0, 0, 0, 0],
             [0, 0, 0, 0]]
-        self.random_tile()
-        self.random_tile()
-        self.random_tile()
-        self.random_tile()
+        if self.load_saved_game():
+            self.random_tile()
+            self.random_tile()
+            self.random_tile()
+            self.random_tile()
 
-    def change_max_score(self):
-        pass
+
+    def load_saved_game(self):
+        with open('game.save', 'rb') as file:
+            data: Dict = pickle.load(file)
+        saved_game_field = data.get('game_field')
+        self.max_score = data.get('max_score')
+        saved_score = data.get('score')
+        if saved_game_field and self.load_game:
+            for y, row in enumerate(saved_game_field):
+                for x, value in enumerate(row):
+                    if value != 0:
+                        self.game_field[y][x] = self.game_field[y][x] = Tile(value,
+                                                               self.cord_dict_y[y], self.cord_dict_x[x])
+            self.score = saved_score
+            return False
+        return True
 
     def save_game(self):
         data = {}
         if not self.is_game_over:
+            game_field_to_save = [
+                [0, 0, 0, 0],
+                [0, 0, 0, 0],
+                [0, 0, 0, 0],
+                [0, 0, 0, 0]]
+            for y, row in enumerate(self.game_field):
+                for x, tile in enumerate(row):
+                    if tile != 0:
+                        game_field_to_save[y][x] = tile.value
             data['score'] = self.score
-            data['game_field'] = self.game_field
+            data['game_field'] = game_field_to_save
         data['max_score'] = self.score if self.score > self.max_score else self.max_score
         with open('game.save', 'wb') as s_file:
-            pickle.dump(self.game_field, s_file)
+            pickle.dump(data, s_file)
+        self.timer = time.perf_counter()
 
     def on_draw(self):
         self.clear()
         arcade.draw_lrwh_rectangle_textured(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, self.background)
-        arcade.draw_text(str(self.score), 90, SCREEN_HEIGHT - 33, arcade.color.BLACK, 16, 50, font_name='Arial')
+        arcade.draw_text(str(self.score), 134, SCREEN_HEIGHT - 33, arcade.color.BLACK, 16, 50, font_name='Arial')
         arcade.draw_text(str(self.max_score), 450, SCREEN_HEIGHT - 33, arcade.color.BLACK, 16, 50, font_name='Arial')
+        if time.perf_counter() - self.timer <= 2:
+            arcade.draw_lrwh_rectangle_textured(4, 556, 42, 42, self.save_success_image)
         if self.score >= self.level * 500:
             self.level += 1
         for i in self.game_field:
@@ -74,6 +104,7 @@ class GameView(arcade.View):
                 if j:
                     self.quit_game_counter += 1
         if self.quit_game_counter == 16:
+            self.is_game_over = True
             self.save_game()
             self.window.show_view(GameOverView())
         else:
@@ -188,14 +219,12 @@ class GameView(arcade.View):
                         self.move_right(y, x)
             self.random_tile()
 
-        if key == arcade.key.S:
-            self.save_game()
-
     def on_mouse_motion(self, x, y, delta_x, delta_y):
         pass
 
     def on_mouse_press(self, x, y, button, key_modifiers):
-        pass
+        if button == 1 and (5 <= x <= 46) and (557 <= y <= 599):
+            self.save_game()
 
     def on_mouse_release(self, x, y, button, key_modifiers):
         pass
@@ -206,7 +235,9 @@ class StartGameView(arcade.View):
         super().__init__()
         self.screen = arcade.load_texture('images/start game screen.png')
         self.load_game_button = arcade.load_texture('images/load a game button.png')
+        self.load_game_button_2 = arcade.load_texture('images/load a game button 2.png')
         self.start_game_button = arcade.load_texture('images/start a new game button.png')
+        self.start_game_button_2 = arcade.load_texture('images/start a new game button 2.png')
 
     def on_draw(self):
         self.clear()
@@ -218,11 +249,27 @@ class StartGameView(arcade.View):
                                             self.start_game_button.width, self.start_game_button.height,
                                             self.start_game_button)
 
-    def on_mouse_press(self, x, y, button, key_modifiers):
-        if button == 1 and (x >= 1 and x <= 552) and (
-                y >= 332 and y <= 388):
+    # def on_mouse_press(self, x, y, button, key_modifiers):
+    #     if button == 1 and (1 <= x <= 552) and (
+    #             332 <= y <= 388):
+    #         arcade.draw_lrwh_rectangle_textured(1, (SCREEN_HEIGHT // 2 + self.start_game_button.height // 2) + 3,
+    #                                             self.start_game_button.width, self.start_game_button.height,
+    #                                             self.start_game_button_2)
+    #
+    #     elif button == 1 and (1 <= x <= 552) and (
+    #             273 <= y <= 326):
+    #         arcade.draw_lrwh_rectangle_textured(1, (SCREEN_HEIGHT // 2 - self.load_game_button.height // 2) - 3,
+    #                                             self.load_game_button.width, self.load_game_button.height,
+    #                                             self.load_game_button_2)
+
+    def on_mouse_release(self, x: int, y: int, button: int, modifiers: int):
+        if button == 1 and (1 <= x <= 552) and (
+                332 <= y <= 388):
             self.window.show_view(GameView())
 
+        elif button == 1 and (1 <= x <= 552) and (
+                273 <= y <= 326):
+            self.window.show_view(GameView(load_game = True))
 
 class GameOverView(arcade.View):
     def __init__(self):
