@@ -237,19 +237,41 @@ class StartGameView(arcade.View):
         self.ui_manager = arcade.gui.UIManager()
         self.ui_manager.enable()
         self.buttons_layout = arcade.gui.UIBoxLayout()
-        load_button = arcade.gui.UIFlatButton(text = 'load previous game?')
-        start_new_button = arcade.gui.UIFlatButton(text = 'start a new game?')
-        self.buttons_layout.add(load_button.with_space_around(3))
-        self.buttons_layout.add(start_new_button.with_space_around(3))
+        pixelated_style = {
+            "font_name": ('Kenney Blocks'),
+            "font_size": 18,
+            "font_color": arcade.color.GRAY,
+            "border_width": 3,
+            "border_color": arcade.color.GRAY,
+            "bg_color": arcade.color.BLACK,
+
+            "bg_color_pressed": arcade.color.LIGHT_GRAY,
+            "border_color_pressed": arcade.color.LIGHT_GRAY,
+            "font_color_pressed": arcade.color.BLACK,
+        }
+        load_button = arcade.gui.UIFlatButton(text = 'load previous game?', width = 551, style = pixelated_style)
+        start_new_button = arcade.gui.UIFlatButton(text = 'start a new game?', width = 551, style = pixelated_style)
+        self.buttons_layout.add(load_button.with_space_around(6))
+        self.buttons_layout.add(start_new_button.with_space_around(6))
         self.screen = arcade.load_texture('images/start game screen.png')
-        self.load_game_button = arcade.load_texture('images/load a game button.png')
-        self.load_game_button_2 = arcade.load_texture('images/load a game button 2.png')
-        self.start_game_button = arcade.load_texture('images/start a new game button.png')
-        self.start_game_button_2 = arcade.load_texture('images/start a new game button 2.png')
+        # self.load_game_button = arcade.load_texture('images/load a game button.png')
+        # self.load_game_button_2 = arcade.load_texture('images/load a game button 2.png')
+        # self.start_game_button = arcade.load_texture('images/start a new game button.png')
+        # self.start_game_button_2 = arcade.load_texture('images/start a new game button 2.png')
+        start_new_button.on_click = self.start_new_button_on_click
+        load_button.on_click = self.load_button_on_click
+        self.ui_manager.add(arcade.gui.UIAnchorWidget(anchor_x='center_x', anchor_y='center_y', child=self.buttons_layout))
+
+    def start_new_button_on_click(self, event):
+        self.window.show_view(GameView())
+
+    def load_button_on_click(self, event):
+        self.window.show_view(GameView(load_game = True))
 
     def on_draw(self):
         self.clear()
         arcade.draw_lrwh_rectangle_textured(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, self.screen)
+        self.ui_manager.draw()
         # arcade.draw_lrwh_rectangle_textured(1, (SCREEN_HEIGHT // 2 - 25) - 3,
         #                                     self.load_game_button.width, self.load_game_button.height,
         #                                     self.load_game_button)
