@@ -3,6 +3,7 @@ from typing import Union, List, Dict
 import arcade
 import random
 import pickle
+import arcade.gui
 from config import *
 
 
@@ -233,6 +234,13 @@ class GameView(arcade.View):
 class StartGameView(arcade.View):
     def __init__(self):
         super().__init__()
+        self.ui_manager = arcade.gui.UIManager()
+        self.ui_manager.enable()
+        self.buttons_layout = arcade.gui.UIBoxLayout()
+        load_button = arcade.gui.UIFlatButton(text = 'load previous game?')
+        start_new_button = arcade.gui.UIFlatButton(text = 'start a new game?')
+        self.buttons_layout.add(load_button.with_space_around(3))
+        self.buttons_layout.add(start_new_button.with_space_around(3))
         self.screen = arcade.load_texture('images/start game screen.png')
         self.load_game_button = arcade.load_texture('images/load a game button.png')
         self.load_game_button_2 = arcade.load_texture('images/load a game button 2.png')
@@ -242,12 +250,12 @@ class StartGameView(arcade.View):
     def on_draw(self):
         self.clear()
         arcade.draw_lrwh_rectangle_textured(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, self.screen)
-        arcade.draw_lrwh_rectangle_textured(1, (SCREEN_HEIGHT // 2 - self.load_game_button.height // 2) - 3,
-                                            self.load_game_button.width, self.load_game_button.height,
-                                            self.load_game_button)
-        arcade.draw_lrwh_rectangle_textured(1, (SCREEN_HEIGHT // 2 + self.start_game_button.height // 2) + 3,
-                                            self.start_game_button.width, self.start_game_button.height,
-                                            self.start_game_button)
+        # arcade.draw_lrwh_rectangle_textured(1, (SCREEN_HEIGHT // 2 - 25) - 3,
+        #                                     self.load_game_button.width, self.load_game_button.height,
+        #                                     self.load_game_button)
+        # arcade.draw_lrwh_rectangle_textured(1, (SCREEN_HEIGHT // 2 + 25) + 3,
+        #                                     self.start_game_button.width, self.start_game_button.height,
+        #                                     self.start_game_button)
 
     # def on_mouse_press(self, x, y, button, key_modifiers):
     #     if button == 1 and (1 <= x <= 552) and (
