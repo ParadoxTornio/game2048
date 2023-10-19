@@ -20,7 +20,7 @@ class Tile(arcade.Sprite):
 
 class GameView(arcade.View):
 
-    def __init__(self, load_game = False):
+    def __init__(self, load_game=False):
         super().__init__()
         self.background = None
         self.save_success_image = None
@@ -55,7 +55,6 @@ class GameView(arcade.View):
             self.random_tile()
             self.random_tile()
 
-
     def load_saved_game(self):
         with open('game.save', 'rb') as file:
             data: Dict = pickle.load(file)
@@ -67,7 +66,7 @@ class GameView(arcade.View):
                 for x, value in enumerate(row):
                     if value != 0:
                         self.game_field[y][x] = self.game_field[y][x] = Tile(value,
-                                                               self.cord_dict_y[y], self.cord_dict_x[x])
+                                                                             self.cord_dict_y[y], self.cord_dict_x[x])
             self.score = saved_score
             return False
         return True
@@ -238,7 +237,7 @@ class StartGameView(arcade.View):
         self.ui_manager.enable()
         self.buttons_layout = arcade.gui.UIBoxLayout()
         pixelated_style = {
-            "font_name": ('Kenney Blocks'),
+            "font_name": ('Kenney Blocks'),  # noqa
             "font_size": 18,
             "font_color": arcade.color.GRAY,
             "border_width": 3,
@@ -249,8 +248,8 @@ class StartGameView(arcade.View):
             "border_color_pressed": arcade.color.LIGHT_GRAY,
             "font_color_pressed": arcade.color.BLACK,
         }
-        load_button = arcade.gui.UIFlatButton(text = 'load previous game?', width = 551, style = pixelated_style)
-        start_new_button = arcade.gui.UIFlatButton(text = 'start a new game?', width = 551, style = pixelated_style)
+        load_button = arcade.gui.UIFlatButton(text='load previous game?', width=551, style=pixelated_style)
+        start_new_button = arcade.gui.UIFlatButton(text='start a new game?', width=551, style=pixelated_style)
         self.buttons_layout.add(load_button.with_space_around(6))
         self.buttons_layout.add(start_new_button.with_space_around(6))
         self.screen = arcade.load_texture('images/start game screen.png')
@@ -260,13 +259,14 @@ class StartGameView(arcade.View):
         # self.start_game_button_2 = arcade.load_texture('images/start a new game button 2.png')
         start_new_button.on_click = self.start_new_button_on_click
         load_button.on_click = self.load_button_on_click
-        self.ui_manager.add(arcade.gui.UIAnchorWidget(anchor_x='center_x', anchor_y='center_y', child=self.buttons_layout))
+        self.ui_manager.add(
+            arcade.gui.UIAnchorWidget(anchor_x='center_x', anchor_y='center_y', child=self.buttons_layout))
 
-    def start_new_button_on_click(self, event):
+    def start_new_button_on_click(self, event):  # noqa
         self.window.show_view(GameView())
 
-    def load_button_on_click(self, event):
-        self.window.show_view(GameView(load_game = True))
+    def load_button_on_click(self, event):  # noqa
+        self.window.show_view(GameView(load_game=True))
 
     def on_draw(self):
         self.clear()
@@ -299,7 +299,8 @@ class StartGameView(arcade.View):
 
         elif button == 1 and (1 <= x <= 552) and (
                 273 <= y <= 326):
-            self.window.show_view(GameView(load_game = True))
+            self.window.show_view(GameView(load_game=True))
+
 
 class GameOverView(arcade.View):
     def __init__(self):
